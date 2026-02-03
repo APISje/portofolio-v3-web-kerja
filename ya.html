@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obfuscation Tool | ANTC HUB</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="tool-body">
+    <nav class="nav-pro">
+        <div class="container">
+            <div class="nav-content">
+                <a href="/" class="nav-logo" style="text-decoration: none; color: white;">
+                    <div class="logo.mp3">APIP</div>
+                    <span>HUB</span>
+                </a>
+                <a href="index.html" class="btn-pro-small" style="text-decoration: none;">Kembali</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="padding-top: 120px;">
+        <div class="tool-container-pro">
+            <div class="tool-header-pro">
+                <h1>Obfuscation Backslash Decimal</h1>
+                <p>Amankan source code Anda dengan enkripsi decimal profesional.</p>
+            </div>
+
+            <div class="tool-settings-pro">
+                <label for="lang-select">Pilih Bahasa Pemrograman:</label>
+                <select id="lang-select">
+                    <option value="lua">Lua</option>
+                    <option value="luau">Luau</option>
+                    <option value="nodejs">Node.js</option>
+                    <option value="indexjs">Index.js / JavaScript</option>
+                </select>
+            </div>
+
+            <div class="editor-wrapper">
+                <div class="editor-box">
+                    <h3>Input Script</h3>
+                    <textarea id="input-script" class="tool-textarea" placeholder="Tempel script (Lua, Luau, JS) Anda di sini..."></textarea>
+                </div>
+                
+                <div class="tool-action-center">
+                    <button onclick="processObfuscation()" class="tool-btn-main">
+                        <i class="fas fa-bolt"></i> Obfuscate Script
+                    </button>
+                </div>
+
+                <div id="output-panel" class="editor-box hidden">
+                    <h3>Output Obfuscated</h3>
+                    <textarea id="output-script" class="tool-textarea" readonly></textarea>
+                    
+                    <div class="tool-btn-group">
+                        <button onclick="copyToClipboard()" class="tool-btn-outline"><i class="fas fa-copy"></i> Salin</button>
+                        <button onclick="downloadZip()" class="tool-btn-outline"><i class="fas fa-download"></i> Unduh File</button>
+                    </div>
+
+                    <div id="success-anim" class="tool-success-box hidden">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Terimakasih telah menggunakan fitur kami!</p>
+                        <span>by ANTC HUB TIM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <audio id="obfs-music" loop>
+        <source src="lagu2.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="script.js"></script>
+    <script>
+        // Play music on first interaction
+        window.addEventListener('click', function() {
+            const music = document.getElementById('obfs-music');
+            if (music) music.play().catch(e => console.log("Music blocked"));
+        }, { once: true });
+
+        // Override or Add Tool Logic
+        function processObfuscation() {
+            const input = document.getElementById('input-script').value;
+            const lang = document.getElementById('lang-select').value;
+            
+            if (!input.trim()) return alert("Silakan masukkan script terlebih dahulu!");
+
+            let obfuscated = "";
+            for (let i = 0; i < input.length; i++) {
+                obfuscated += "\\" + input.charCodeAt(i).toString(10);
+            }
+
+            if (lang === "lua" || lang === "luau") {
+                obfuscated = `-- Obfuscated by ANTC HUB\nloadstring("${obfuscated}")()`;
+            } else if (lang === "nodejs" || lang === "indexjs") {
+                obfuscated = `// Obfuscated by ANTC HUB\neval("${obfuscated}")`;
+            }
+
+            const outputPanel = document.getElementById('output-panel');
+            const outputScript = document.getElementById('output-script');
+            const successAnim = document.getElementById('success-anim');
+
+            outputScript.value = obfuscated;
+            outputPanel.classList.remove('hidden');
+            successAnim.classList.remove('hidden');
+            
+            // Professional fade in
+            outputPanel.style.opacity = '0';
+            setTimeout(() => {
+                outputPanel.style.transition = 'opacity 0.5s ease-in';
+                outputPanel.style.opacity = '1';
+            }, 10);
+        }
+
+        function copyToClipboard() {
+            const output = document.getElementById('output-script');
+            output.select();
+            document.execCommand('copy');
+            alert("Script berhasil disalin!");
+        }
+
+        function downloadZip() {
+            const content = document.getElementById('output-script').value;
+            const lang = document.getElementById('lang-select').value;
+            let ext = (lang === "lua" || lang === "luau") ? ".lua" : ".js";
+            
+            const blob = new Blob([content], { type: "text/plain" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "antc_obfuscated" + ext;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
